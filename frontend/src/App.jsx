@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Menu, Home, User, Bell, Apple } from 'lucide-react';
+import { Menu, Home, User, Apple } from 'lucide-react';
 import UserForm from './components/UserForm';
 import ModernDashboard from './components/ModernDashboard';
 import TrackDiet from './components/TrackDiet';
@@ -14,52 +14,98 @@ import { Activity, Search, Info, MessageSquare } from 'lucide-react';
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   // Initialize macros data from localStorage if available, else default
-  const [macrosData, setMacrosData] = useState(() => {
-    try {
-      const saved = localStorage.getItem('userMacros');
-      return saved ? JSON.parse(saved) : {
-        targetCalories: 2000,
-        macros: { protein: 120, carbs: 220, fat: 65 },
-        bmr: 1650,
-        tdee: 2000
-      };
-    } catch (e) {
-      console.error("Error parsing userMacros", e);
-      return {
-        targetCalories: 2000,
-        macros: { protein: 120, carbs: 220, fat: 65 },
-        bmr: 1650,
-        tdee: 2000
-      };
-    }
-  });
+  const [macrosData, setMacrosData] = useState(null);
   const [mealPlan, setMealPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [user, setUser] = useState(null);
 
-  // Load user from session if available
+  // Load user and their specific macros from session if available
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem('supabaseUser');
       if (savedUser) {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        const userLocalMacros = localStorage.getItem(`userMacros_${parsedUser.emailid}`);
+        if (userLocalMacros) {
+          setMacrosData(JSON.parse(userLocalMacros));
+        } else {
+          setMacrosData({
+            targetCalories: 2000,
+            macros: { protein: 120, carbs: 220, fat: 65 },
+            bmr: 1650,
+            tdee: 2000
+          });
+        }
       }
     } catch (e) {
-      console.error("Error parsing supabaseUser", e);
-      localStorage.removeItem('supabaseUser');
+      console.error("Error parsing session", e);
     }
   }, []);
 
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem('supabaseUser', JSON.stringify(userData));
+    const userLocalMacros = localStorage.getItem(`userMacros_${userData.emailid}`);
+    if (userLocalMacros) {
+      setMacrosData(JSON.parse(userLocalMacros));
+    } else {
+      setMacrosData({
+        targetCalories: 2000,
+        macros: { protein: 120, carbs: 220, fat: 65 },
+        bmr: 1650,
+        tdee: 2000
+      });
+    }
   };
 
   const handleLogout = () => {
     setUser(null);
+    setMacrosData(null);
     localStorage.removeItem('supabaseUser');
+  };
+
+  const handleCalculate = async (formData) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    const totalCals =
+      formData.goal === 'lose weight' ? formData.tdee - 500 :
+        formData.goal === 'gain weight' ? formData.tdee + 500 :
+          formData.tdee || 2000;
+
+    const newMacrosData = {
+      targetCalories: Math.floor(totalCals),
+      macros: {
+        protein: Math.floor((totalCals * 0.3) / 4),
+        carbs: Math.floor((totalCals * 0.4) / 4),
+        fat: Math.floor((totalCals * 0.3) / 9)
+      },
+      weight: formData.weight,
+      bmi: formData.bmi || (formData.weight / Math.pow(formData.height / 100, 2)).toFixed(1)
+    };
+
+    setMacrosData(newMacrosData);
+
+    try {
+      if (user) {
+        localStorage.setItem(`userMacros_${user.emailid}`, JSON.stringify(newMacrosData));
+      }
+
+      const mealResponse = await axios.get('http://localhost:5000/mealplan');
+      setMealPlan(mealResponse.data);
+
+      setSuccess("Profile updated successfully!");
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to fetch data from the server. Ensure backend is running.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -72,35 +118,6 @@ function App() {
       });
   }, []);
 
-  const handleCalculate = async (formData) => {
-    setLoading(true);
-    setError(null);
-    try {
-      // 1. Calculate macros
-      const calcResponse = await axios.post('http://localhost:5000/calculate', {
-        age: parseInt(formData.age),
-        gender: formData.gender,
-        height: parseInt(formData.height),
-        weight: parseInt(formData.weight),
-        activity: formData.activity,
-        goal: formData.goal
-      });
-      setMacrosData(calcResponse.data);
-      localStorage.setItem('userMacros', JSON.stringify(calcResponse.data));
-
-      // 2. Fetch meal plan
-      const mealResponse = await axios.get('http://localhost:5000/mealplan');
-      setMealPlan(mealResponse.data);
-
-      setSuccess("Profile updated successfully! You can view your new plan on the Dashboard.");
-      setTimeout(() => setSuccess(null), 5000);
-    } catch (err) {
-      console.error(err);
-      setError('Failed to fetch data from the server. Ensure backend is running.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (!user) {
     return <Auth onLogin={handleLogin} />;
@@ -171,20 +188,8 @@ function App() {
             <User size={20} />
             <span>My Profile</span>
           </button>
-        </nav>
 
-        <div className="sidebar-footer" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <Bell size={20} className="bell-icon" />
-          <div className="user-profile-small">
-            <img
-              src={JSON.parse(localStorage.getItem('userProfileForm'))?.profilePic || `https://ui-avatars.com/api/?name=${user.username}&background=0D8ABC&color=fff`}
-              alt="User"
-              className="avatar"
-              style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }}
-            />
-            <span style={{ marginLeft: '10px' }}>{user.username}</span>
-          </div>
-        </div>
+        </nav>
       </aside>
 
       {/* Main Content Area */}
@@ -202,6 +207,7 @@ function App() {
           </div>
         )}
 
+
         {!loading && success && currentPage === 'profile' && (
           <div className="card" style={{ borderColor: 'var(--neon-green)', margin: '2rem 2rem 0 2rem' }}>
             <h2 style={{ color: 'var(--neon-green)' }}>Success</h2>
@@ -214,7 +220,7 @@ function App() {
         )}
 
         {!loading && currentPage === 'track-diet' && (
-          <TrackDiet />
+          <TrackDiet user={user} />
         )}
 
         {!loading && currentPage === 'health' && (
@@ -234,22 +240,22 @@ function App() {
         )}
 
         {!loading && currentPage === 'profile' && (
-          <div className="container" style={{ maxWidth: '800px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem', marginBottom: '2rem' }}>
+          <div className="container" style={{ maxWidth: '800px', margin: '2rem auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <h1 className="title" style={{ margin: 0, textAlign: 'left', fontSize: '2rem' }}>My Profile</h1>
               <button
                 onClick={handleLogout}
                 className="btn-primary"
-                style={{ width: 'auto', marginTop: 0, background: 'var(--neon-red)', padding: '0.5rem 1.5rem', fontSize: '0.9rem' }}
+                style={{ width: 'auto', marginTop: 0, background: 'var(--neon-red)', padding: '0.5rem 1.5rem' }}
               >
                 Log Out
               </button>
             </div>
 
             <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-              Adjust your personal information and daily caloric targets.
+              Adjust your personal information and daily caloric targets. This data is private to your account.
             </p>
-            <UserForm onSubmit={handleCalculate} />
+            <UserForm onSubmit={handleCalculate} userEmail={user.emailid} />
 
             {macrosData && macrosData.bmi && (
               <div className="glass-panel" style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(6, 182, 212, 0.05)', border: '1px solid var(--neon-cyan)' }}>

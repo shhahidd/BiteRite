@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, Bell, Bot, Activity, Moon, Flame, Footprints, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { Menu, Bot, Activity, Moon, Flame, Footprints, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -203,13 +203,13 @@ const VitalCluster = ({ data, targetCalories = 2000 }) => {
                 {/* Macro floating notes */}
                 <div style={{ position: 'absolute', top: '50%', right: '5%', transform: 'translateY(-50%)', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        <div style={{ color: 'white', fontWeight: 'bold' }}>{totals.protein || 0}g</div> Protein
+                        <div style={{ color: 'white', fontWeight: 'bold' }}>{Math.floor(totals.protein || 0)}g</div> Protein
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        <div style={{ color: 'white', fontWeight: 'bold' }}>{totals.carbs || 0}g</div> Carbs
+                        <div style={{ color: 'white', fontWeight: 'bold' }}>{Math.floor(totals.carbs || 0)}g</div> Carbs
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        <div style={{ color: 'white', fontWeight: 'bold' }}>{totals.fat || 0}g</div> Fats
+                        <div style={{ color: 'white', fontWeight: 'bold' }}>{Math.floor(totals.fat || 0)}g</div> Fats
                     </div>
                 </div>
             </div>
@@ -284,7 +284,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
 
     const eaten = dailySummary?.totals?.calories || 0;
     const burned = dailySummary?.burnedCalories || 0;
-    const netCalories = eaten - burned;
+    const netCalories = Math.max(0, eaten);
 
     const calProgress = targetCalories > 0 ? Math.min((netCalories / targetCalories) * 100, 100) : 0;
     const waterGoal = parseFloat(waterTarget) || 2.0;
@@ -295,7 +295,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
         const d = fDate || apiDate;
         if (!d) return;
 
-        fetch(`http://localhost:5000/daily-summary?date=${d}`)
+        fetch(`http://localhost:5000/daily-summary?date=${d}&userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => {
                 if (data && data.totals) {
@@ -313,24 +313,24 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
             })
             .catch(err => console.error("Could not fetch daily summary", err));
 
-        fetch('http://localhost:5000/weekly-summary')
+        fetch(`http://localhost:5000/weekly-summary?userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => setWeeklyChartData(data))
             .catch(err => console.error("Could not fetch weekly summary", err));
 
-        fetch('http://localhost:5000/grocery-list')
+        fetch(`http://localhost:5000/grocery-list?userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => setGroceryList(data))
             .catch(err => console.error("Could not fetch grocery list", err));
 
-        fetch('http://localhost:5000/api/fridge')
+        fetch(`http://localhost:5000/api/fridge?userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => {
                 if (data && data.ingredients) setFridgeIngredients(data.ingredients);
             })
             .catch(err => console.error("Could not fetch fridge list", err));
 
-        fetch(`http://localhost:5000/history?days=${historyDays}`)
+        fetch(`http://localhost:5000/history?days=${historyDays}&userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => setMealHistory(data))
             .catch(err => console.error("Could not fetch history", err));
@@ -339,7 +339,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
     const fetchInsightData = async (date) => {
         setLoadingInsights(true);
         try {
-            const res = await fetch(`http://localhost:5000/daily-summary?date=${date}`);
+            const res = await fetch(`http://localhost:5000/daily-summary?date=${date}&userId=${user?.emailid}`);
             const data = await res.json();
             setInsightData(data);
         } catch (err) {
@@ -390,19 +390,19 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
             }
         }
 
-        // Load Water
-        const savedWater = localStorage.getItem(`water_${formattedApiDate}`);
+        // Load Water for active user
+        const savedWater = localStorage.getItem(`water_${user?.emailid}_${formattedApiDate}`);
         if (savedWater) setWaterIntake(parseInt(savedWater));
 
         fetchAllData(formattedApiDate);
-    }, []);
+    }, [user]);
 
     const saveFridgeToSupabase = async (ingredientsVal) => {
         try {
             await fetch('http://localhost:5000/api/fridge', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ingredients: ingredientsVal })
+                body: JSON.stringify({ ingredients: ingredientsVal, userId: user?.emailid })
             });
         } catch (err) {
             console.error("Failed to save fridge", err);
@@ -471,7 +471,8 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                 body: JSON.stringify({
                     date: formattedApiDate,
                     startTime: fastingStart,
-                    endTime: fastingEnd
+                    endTime: fastingEnd,
+                    userId: user?.emailid
                 })
             });
             const data = await response.json();
@@ -524,8 +525,17 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                 <button className="nav-icon-btn"><Menu size={24} /></button>
                 <span className="nav-title">Nutritional Planner</span>
                 <div className="nav-icons">
-                    <button className="nav-icon-btn"><Bell size={20} /></button>
-                    <img src={user?.profilePic || "https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff"} alt="User" className="avatar" />
+                    <button
+                        onClick={() => {
+                            localStorage.removeItem('supabaseUser');
+                            localStorage.removeItem('userProfileForm');
+                            window.location.reload();
+                        }}
+                        className="btn-primary"
+                        style={{ width: 'auto', marginTop: 0, background: 'var(--neon-red)', padding: '0.4rem 1rem', fontSize: '0.75rem' }}
+                    >
+                        Log Out
+                    </button>
                 </div>
             </div>
 
@@ -548,7 +558,9 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                             fontSize: '0.9rem'
                         }}>
                             <span>BMI: {macrosData.bmi}</span>
-                            <span style={{ fontSize: '0.7rem', opacity: 0.8 }}>({macrosData.bmi < 18.5 ? 'Underweight' : macrosData.bmi < 25 ? 'Normal' : 'Overweight'})</span>
+                            <span style={{ fontSize: '0.7rem', opacity: 0.8 }}>
+                                ({macrosData.bmi < 18.5 ? 'Underweight' : macrosData.bmi < 25 ? 'Normal' : macrosData.bmi < 30 ? 'Overweight' : 'Obese'})
+                            </span>
                         </div>
                     )}
                 </div>
@@ -577,7 +589,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                                     onClick={() => {
                                         const newWater = cup === waterIntake ? cup - 1 : cup;
                                         setWaterIntake(newWater);
-                                        localStorage.setItem(`water_${apiDate}`, newWater);
+                                        localStorage.setItem(`water_${user?.emailid}_${apiDate}`, newWater);
                                     }}
                                     className={`drop ${cup > waterIntake ? 'empty' : ''}`}
                                     style={{ cursor: 'pointer' }}
@@ -767,7 +779,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                             onClick={async () => {
                                 setLoadingGrocery(true);
                                 try {
-                                    const res = await fetch('http://localhost:5000/predict-grocery');
+                                    const res = await fetch(`http://localhost:5000/predict-grocery?userId=${user?.emailid}`);
                                     const data = await res.json();
                                     setGroceryList(data);
                                 } catch (err) {

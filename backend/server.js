@@ -74,14 +74,14 @@ app.post('/calculate', (req, res) => {
     else if (goal === 'gain weight') targetCalories += 500;
     if (targetCalories < 1200) targetCalories = 1200;
     const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
-    const proteinGrams = Math.round((targetCalories * 0.30) / 4);
-    const carbsGrams = Math.round((targetCalories * 0.40) / 4);
-    const fatGrams = Math.round((targetCalories * 0.30) / 9);
+    const proteinGrams = Math.floor((targetCalories * 0.30) / 4);
+    const carbsGrams = Math.floor((targetCalories * 0.40) / 4);
+    const fatGrams = Math.floor((targetCalories * 0.30) / 9);
 
     res.json({
-        bmr: Math.round(bmr),
-        tdee: Math.round(tdee),
-        targetCalories: Math.round(targetCalories),
+        bmr: Math.floor(bmr),
+        tdee: Math.floor(tdee),
+        targetCalories: Math.floor(targetCalories),
         bmi: parseFloat(bmi),
         weight: weight,
         macros: { protein: proteinGrams, carbs: carbsGrams, fat: fatGrams }
@@ -157,8 +157,8 @@ if (!fs.existsSync(userLogsPath)) fs.writeFileSync(userLogsPath, JSON.stringify(
 
 // POST /log-food
 app.post('/log-food', async (req, res) => {
-    const { foodId, mealType, date, weight } = req.body;
-    if (!foodId || !mealType || !date || !weight) return res.status(400).json({ error: 'Missing required parameters' });
+    const { foodId, mealType, date, weight, userId } = req.body;
+    if (!foodId || !mealType || !date || weight === undefined || !userId) return res.status(400).json({ error: 'Missing required parameters' });
 
     const w = parseFloat(weight) || 100;
     let food = null;
@@ -201,13 +201,14 @@ app.post('/log-food', async (req, res) => {
 
     if (!food) return res.status(404).json({ error: 'Food not found' });
 
-    // Multiplier = (Entered Weight / Base Weight)
+    // Multiplier
     const multiplier = w / (food.baseWeight || 100);
 
     try {
         const logs = getUserLogs();
         const newLog = {
             id: Date.now(),
+            userId, // Add userId here
             date,
             mealType,
             weight: w,
@@ -230,11 +231,11 @@ app.post('/log-food', async (req, res) => {
 
 // POST /log-fasting
 app.post('/log-fasting', (req, res) => {
-    const { date, startTime, endTime } = req.body;
-    if (!date || !startTime || !endTime) return res.status(400).json({ error: 'Missing required parameters' });
+    const { date, startTime, endTime, userId } = req.body;
+    if (!date || !startTime || !endTime || !userId) return res.status(400).json({ error: 'Missing required parameters' });
     try {
         const logs = getUserLogs();
-        const newLog = { id: Date.now(), date, type: 'fasting', startTime, endTime };
+        const newLog = { id: Date.now(), userId, date, type: 'fasting', startTime, endTime };
         logs.push(newLog);
         fs.writeFileSync(userLogsPath, JSON.stringify(logs, null, 2));
         res.json({ success: true, log: newLog });
@@ -245,10 +246,10 @@ app.post('/log-fasting', (req, res) => {
 
 // GET /daily-summary
 app.get('/daily-summary', (req, res) => {
-    const { date } = req.query;
-    if (!date) return res.status(400).json({ error: 'Missing date' });
+    const { date, userId } = req.query;
+    if (!date || !userId) return res.status(400).json({ error: 'Missing date or userId' });
     try {
-        const logs = getUserLogs();
+        const logs = getUserLogs().filter(log => log.userId === userId);
         const todaysLogs = logs.filter(log => log.date === date && (log.food || log.type === 'activity'));
         const todaysFast = logs.find(log => log.date === date && log.type === 'fasting');
 
@@ -276,7 +277,12 @@ app.get('/daily-summary', (req, res) => {
         });
         res.json({
             date,
-            totals,
+            totals: {
+                calories: Math.floor(totals.calories),
+                protein: Math.floor(totals.protein),
+                carbs: Math.floor(totals.carbs),
+                fat: Math.floor(totals.fat)
+            },
             meals,
             fasting: todaysFast || null,
             activities,
@@ -290,7 +296,9 @@ app.get('/daily-summary', (req, res) => {
 // GET /weekly-summary
 app.get('/weekly-summary', (req, res) => {
     try {
-        const logs = getUserLogs();
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const logs = getUserLogs().filter(log => log.userId === userId);
         const days = [];
         const today = new Date();
         for (let i = 6; i >= 0; i--) {
@@ -298,10 +306,10 @@ app.get('/weekly-summary', (req, res) => {
             d.setDate(today.getDate() - i);
             const dateStr = d.toISOString().split('T')[0];
             const dayLogs = logs.filter(log => log.date === dateStr && log.food);
-            const totalCals = dayLogs.reduce((sum, log) => sum + log.food.calories, 0);
-            const totalProtein = dayLogs.reduce((sum, log) => sum + log.food.protein, 0);
-            const totalCarbs = dayLogs.reduce((sum, log) => sum + log.food.carbs, 0);
-            const totalFat = dayLogs.reduce((sum, log) => sum + log.food.fat, 0);
+            const totalCals = Math.floor(dayLogs.reduce((sum, log) => sum + log.food.calories, 0));
+            const totalProtein = Math.floor(dayLogs.reduce((sum, log) => sum + log.food.protein, 0));
+            const totalCarbs = Math.floor(dayLogs.reduce((sum, log) => sum + log.food.carbs, 0));
+            const totalFat = Math.floor(dayLogs.reduce((sum, log) => sum + log.food.fat, 0));
             days.push({
                 date: dateStr,
                 label: d.toLocaleDateString('en-US', { weekday: 'short' }),
@@ -318,11 +326,13 @@ app.get('/weekly-summary', (req, res) => {
 // GET /history
 app.get('/history', (req, res) => {
     try {
-        const daysParam = parseInt(req.query.days) || 7;
-        const logs = getUserLogs();
-        const today = new Date();
+        const { days, userId } = req.query;
+        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const numDays = parseInt(days) || 7;
+        const logs = getUserLogs().filter(log => log.userId === userId);
         const history = [];
-        for (let i = 0; i < daysParam; i++) {
+        const today = new Date();
+        for (let i = 0; i < numDays; i++) {
             const d = new Date();
             d.setDate(today.getDate() - i);
             const dateStr = d.toISOString().split('T')[0];
@@ -344,6 +354,7 @@ app.get('/history', (req, res) => {
                     }
                 }
             });
+            summary.calories = Math.floor(summary.calories);
 
             history.push({
                 date: dateStr,
@@ -361,7 +372,9 @@ app.get('/history', (req, res) => {
 // GET /predict-grocery
 app.get('/predict-grocery', (req, res) => {
     try {
-        const logs = getUserLogs();
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const logs = getUserLogs().filter(log => log.userId === userId);
         const mealDataset = getMealDataset();
         const today = new Date();
         const sevenDaysAgo = new Date();
@@ -404,7 +417,9 @@ app.get('/predict-grocery', (req, res) => {
 
 app.get('/grocery-list', (req, res) => {
     try {
-        const logs = getUserLogs();
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const logs = getUserLogs().filter(log => log.userId === userId);
         const today = new Date();
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(today.getDate() - 7);
@@ -438,7 +453,9 @@ app.get('/grocery-list', (req, res) => {
 // GET /api/fridge (Supabase)
 app.get('/api/fridge', async (req, res) => {
     try {
-        const { data, error } = await supabase.from('user_fridge').select('*').limit(1);
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const { data, error } = await supabase.from('user_fridge').select('*').eq('user_id', userId).limit(1);
         if (error) {
             console.error("Supabase GET error:", error.message);
             return res.json({ ingredients: '' }); // Fallback
@@ -452,9 +469,10 @@ app.get('/api/fridge', async (req, res) => {
 
 // POST /api/fridge (Supabase)
 app.post('/api/fridge', async (req, res) => {
-    const { ingredients } = req.body;
+    const { ingredients, userId } = req.body;
+    if (!userId) return res.status(400).json({ error: 'Missing userId' });
     try {
-        const { data: existing, error: selectErr } = await supabase.from('user_fridge').select('*').limit(1);
+        const { data: existing, error: selectErr } = await supabase.from('user_fridge').select('*').eq('user_id', userId).limit(1);
         if (selectErr && selectErr.code !== 'PGRST116') {
             console.error("Supabase select error:", selectErr.message);
         }
@@ -464,7 +482,7 @@ app.post('/api/fridge', async (req, res) => {
             const { error } = await supabase.from('user_fridge').update({ ingredients }).eq('id', existing[0].id);
             upsertError = error;
         } else {
-            const { error } = await supabase.from('user_fridge').insert([{ ingredients }]);
+            const { error } = await supabase.from('user_fridge').insert([{ ingredients, user_id: userId }]);
             upsertError = error;
         }
 
@@ -482,7 +500,9 @@ app.post('/api/fridge', async (req, res) => {
 // GET /activity-trends
 app.get('/activity-trends', (req, res) => {
     try {
-        const logs = getUserLogs();
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const logs = getUserLogs().filter(log => log.userId === userId);
         const trends = [];
         const today = new Date();
 
@@ -526,11 +546,11 @@ app.get('/activity-trends', (req, res) => {
 
 // POST /log-activity (Steps, Sleep, Workout)
 app.post('/log-activity', (req, res) => {
-    const { type, value, date, unit } = req.body;
-    if (!type || !value || !date) return res.status(400).json({ error: 'Missing parameters' });
+    const { type, value, date, unit, userId } = req.body;
+    if (!type || !value || !date || !userId) return res.status(400).json({ error: 'Missing parameters' });
     try {
         const logs = getUserLogs();
-        const newLog = { id: Date.now(), date, type: 'activity', activityType: type, value, unit };
+        const newLog = { id: Date.now(), userId, date, type: 'activity', activityType: type, value, unit };
         logs.push(newLog);
         fs.writeFileSync(userLogsPath, JSON.stringify(logs, null, 2));
         res.json({ success: true, log: newLog });

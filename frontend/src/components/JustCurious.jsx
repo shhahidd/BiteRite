@@ -6,7 +6,13 @@ const JustCurious = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedFood, setSelectedFood] = useState(null);
-    const [portion, setPortion] = useState(1);
+    const [weight, setWeight] = useState(100);
+
+    const calculateCalories = (food, w) => {
+        if (!food) return 0;
+        const base = food.baseWeight || 100;
+        return Math.floor((food.calories / base) * w);
+    };
 
     const handleSearch = async () => {
         if (!query.trim()) return;
@@ -108,9 +114,12 @@ const JustCurious = () => {
                                 border: '1px solid var(--brColor)'
                             }}>
                                 <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>ESTIMATED CALORIES</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--neon-orange)' }}>
+                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--neon-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                                     {calculateCalories(selectedFood, weight)}
-                                    <span style={{ fontSize: '1rem', marginLeft: '5px' }}>kcal</span>
+                                    <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>kcal</span>
+                                </div>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                    Portion: {weight}g ({Math.round((weight / (selectedFood.baseWeight || 100)) * 10) / 10}x base)
                                 </div>
                             </div>
 

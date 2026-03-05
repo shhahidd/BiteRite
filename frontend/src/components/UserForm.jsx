@@ -1,28 +1,27 @@
 import React, { useState } from 'react';
 
-const UserForm = ({ onSubmit }) => {
+const UserForm = ({ onSubmit, userEmail }) => {
     const [formData, setFormData] = useState(() => {
-        const saved = localStorage.getItem('userProfileForm');
+        const saved = localStorage.getItem(`userProfileForm_${userEmail}`);
         return saved ? JSON.parse(saved) : {
             age: '',
             gender: 'male',
             height: '',
             weight: '',
             activity: 'sedentary',
-            goal: 'maintain weight',
-            profilePic: ''
+            goal: 'maintain weight'
         };
     });
 
     const handleChange = (e) => {
         const newData = { ...formData, [e.target.name]: e.target.value };
         setFormData(newData);
-        localStorage.setItem('userProfileForm', JSON.stringify(newData));
+        localStorage.setItem(`userProfileForm_${userEmail}`, JSON.stringify(newData));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        localStorage.setItem('userProfileForm', JSON.stringify(formData));
+        localStorage.setItem(`userProfileForm_${userEmail}`, JSON.stringify(formData));
         onSubmit(formData);
     };
 
@@ -96,17 +95,7 @@ const UserForm = ({ onSubmit }) => {
                             <option value="gain weight">Gain Weight</option>
                         </select>
                     </div>
-                    <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                        <label>Profile Picture URL (DP)</label>
-                        <input
-                            type="url"
-                            name="profilePic"
-                            placeholder="https://example.com/photo.jpg"
-                            value={formData.profilePic || ''}
-                            onChange={handleChange}
-                            className="form-control"
-                        />
-                    </div>
+
                 </div>
 
                 <div style={{ marginTop: '1rem' }}>

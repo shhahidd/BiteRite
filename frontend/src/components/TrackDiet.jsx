@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Plus } from 'lucide-react';
 
-const TrackDiet = () => {
+const TrackDiet = ({ user }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [loadingSearch, setLoadingSearch] = useState(false);
@@ -24,7 +24,7 @@ const TrackDiet = () => {
     const loadDailySummary = async () => {
         setLoadingSummary(true);
         try {
-            const res = await axios.get(`http://localhost:5000/daily-summary?date=${todayStr}`);
+            const res = await axios.get(`http://localhost:5000/daily-summary?date=${todayStr}&userId=${user?.emailid}`);
             setDailySummary(res.data);
         } catch (err) {
             console.error("Failed to load daily summary", err);
@@ -67,7 +67,8 @@ const TrackDiet = () => {
                 foodId,
                 mealType: selectedMealType,
                 date: todayStr,
-                weight
+                weight,
+                userId: user?.emailid
             });
             // Refresh summary
             loadDailySummary();
@@ -180,15 +181,15 @@ const TrackDiet = () => {
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>KCAL EATEN</div>
                             </div>
                             <div className="macro-ring-container text-center">
-                                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--neon-blue)' }}>{dailySummary.totals.protein}g</div>
+                                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--neon-blue)' }}>{Math.floor(dailySummary.totals.protein)}g</div>
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>PROTEIN</div>
                             </div>
                             <div className="macro-ring-container text-center">
-                                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--neon-cyan)' }}>{dailySummary.totals.carbs}g</div>
+                                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--neon-cyan)' }}>{Math.floor(dailySummary.totals.carbs)}g</div>
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>CARBS</div>
                             </div>
                             <div className="macro-ring-container text-center">
-                                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--neon-green)' }}>{dailySummary.totals.fat}g</div>
+                                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--neon-green)' }}>{Math.floor(dailySummary.totals.fat)}g</div>
                                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>FAT</div>
                             </div>
                         </div>

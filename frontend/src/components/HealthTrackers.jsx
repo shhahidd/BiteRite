@@ -22,8 +22,8 @@ const HealthTrackers = ({ user }) => {
     const fetchAllData = async () => {
         try {
             const [statsRes, trendsRes] = await Promise.all([
-                fetch(`http://localhost:5000/daily-summary?date=${today}`),
-                fetch(`http://localhost:5000/activity-trends`)
+                fetch(`http://localhost:5000/daily-summary?date=${today}&userId=${user?.emailid}`),
+                fetch(`http://localhost:5000/activity-trends?userId=${user?.emailid}`)
             ]);
 
             const statsData = await statsRes.json();
@@ -66,7 +66,7 @@ const HealthTrackers = ({ user }) => {
             const res = await fetch('http://localhost:5000/log-activity', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type, value: val, unit, date: today })
+                body: JSON.stringify({ type, value: val, unit, date: today, userId: user?.emailid })
             });
             const data = await res.json();
             if (data.success) {
@@ -131,7 +131,7 @@ const HealthTrackers = ({ user }) => {
     const DailySummarySection = () => {
         if (!dailySummary) return null;
         const totalBurned = dailySummary.burnedCalories || 0;
-        const netKcal = (dailySummary.totals.calories || 0) - totalBurned;
+        const netKcal = (dailySummary.totals.calories || 0);
 
         return (
             <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>

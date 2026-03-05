@@ -133,5 +133,36 @@
       "carbs": 25.4,
       "fat": 11.8
     }
+  },
+  {
+    "id": 1772688891094,
+    "userId": "patelshahid260@gmail.com",
+    "date": "2026-03-05",
+    "mealType": "breakfast",
+    "weight": 100,
+    "food": {
+      "id": "Fruit Punch (with fresh juices)",
+      "name": "Fruit Punch (with fresh juices)",
+      "calories": 36,
+      "protein": 0.1,
+      "carbs": 9.4,
+      "fat": 0
+    }
+  },
+  {
+    "id": 1772689033344,
+    "userId": "patelshahid260@gmail.com",
+    "date": "2026-03-05",
+    "type": "fasting",
+    "startTime": "20:00",
+    "endTime": "12:00"
+  },
+  {
+    "id": 1772690171193,
+    "userId": "patelshahid260@gmail.com",
+    "date": "2026-03-05",
+    "type": "fasting",
+    "startTime": "20:00",
+    "endTime": "12:00"
   }
 ]

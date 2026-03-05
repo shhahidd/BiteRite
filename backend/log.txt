@@ -1,0 +1,4 @@
+Starting data generation...
+Wrote C:\Users\ShahidPatel\.gemini\antigravity\scratch\ai-nutrition-planner\backend\foodDataset.json
+Wrote C:\Users\ShahidPatel\.gemini\antigravity\scratch\ai-nutrition-planner\backend\mealDataset.json
+Datasets generated successfully.

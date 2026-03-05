@@ -1,0 +1,512 @@
+[
+  {
+    "id": 1,
+    "name": "Idli",
+    "category": "breakfast",
+    "calories": 120,
+    "protein": 4.8,
+    "carbs": 24,
+    "fat": 0.4,
+    "baseWeight": 100
+  },
+  {
+    "id": 2,
+    "name": "Dosa",
+    "category": "breakfast",
+    "calories": 120,
+    "protein": 4,
+    "carbs": 20,
+    "fat": 2.5,
+    "baseWeight": 100
+  },
+  {
+    "id": 3,
+    "name": "Masala Dosa",
+    "category": "breakfast",
+    "calories": 250,
+    "protein": 5,
+    "carbs": 30,
+    "fat": 7,
+    "baseWeight": 150
+  },
+  {
+    "id": 4,
+    "name": "Upma",
+    "category": "breakfast",
+    "calories": 200,
+    "protein": 5,
+    "carbs": 35,
+    "fat": 6,
+    "baseWeight": 150
+  },
+  {
+    "id": 5,
+    "name": "Poha",
+    "category": "breakfast",
+    "calories": 275,
+    "protein": 4,
+    "carbs": 30,
+    "fat": 4,
+    "baseWeight": 150
+  },
+  {
+    "id": 6,
+    "name": "Paratha",
+    "category": "breakfast",
+    "calories": 350,
+    "protein": 10,
+    "carbs": 60,
+    "fat": 12,
+    "baseWeight": 100
+  },
+  {
+    "id": 7,
+    "name": "Aloo Paratha",
+    "category": "breakfast",
+    "calories": 300,
+    "protein": 6,
+    "carbs": 46,
+    "fat": 11,
+    "baseWeight": 120
+  },
+  {
+    "id": 8,
+    "name": "Pongal",
+    "category": "breakfast",
+    "calories": 250,
+    "protein": 6,
+    "carbs": 45,
+    "fat": 8,
+    "baseWeight": 150
+  },
+  {
+    "id": 9,
+    "name": "Rava Dosa",
+    "category": "breakfast",
+    "calories": 180,
+    "protein": 4,
+    "carbs": 30,
+    "fat": 5,
+    "baseWeight": 120
+  },
+  {
+    "id": 10,
+    "name": "Appam",
+    "category": "breakfast",
+    "calories": 120,
+    "protein": 2,
+    "carbs": 20,
+    "fat": 4,
+    "baseWeight": 100
+  },
+  {
+    "id": 11,
+    "name": "Steamed Rice",
+    "category": "lunch",
+    "calories": 205,
+    "protein": 4.4,
+    "carbs": 42,
+    "fat": 0.5,
+    "baseWeight": 150
+  },
+  {
+    "id": 12,
+    "name": "Jeera Rice",
+    "category": "lunch",
+    "calories": 250,
+    "protein": 4.5,
+    "carbs": 45,
+    "fat": 5,
+    "baseWeight": 150
+  },
+  {
+    "id": 13,
+    "name": "Dal Tadka",
+    "category": "lunch",
+    "calories": 200,
+    "protein": 10,
+    "carbs": 25,
+    "fat": 7,
+    "baseWeight": 150
+  },
+  {
+    "id": 14,
+    "name": "Sambar",
+    "category": "lunch",
+    "calories": 150,
+    "protein": 7,
+    "carbs": 20,
+    "fat": 4,
+    "baseWeight": 150
+  },
+  {
+    "id": 15,
+    "name": "Rajma",
+    "category": "lunch",
+    "calories": 340,
+    "protein": 10,
+    "carbs": 38,
+    "fat": 16,
+    "baseWeight": 200
+  },
+  {
+    "id": 16,
+    "name": "Chole",
+    "category": "lunch",
+    "calories": 250,
+    "protein": 10,
+    "carbs": 35,
+    "fat": 10,
+    "baseWeight": 200
+  },
+  {
+    "id": 17,
+    "name": "Paneer Butter Masala",
+    "category": "lunch",
+    "calories": 450,
+    "protein": 15,
+    "carbs": 15,
+    "fat": 38,
+    "baseWeight": 200
+  },
+  {
+    "id": 18,
+    "name": "Vegetable Curry",
+    "category": "lunch",
+    "calories": 180,
+    "protein": 4.5,
+    "carbs": 25,
+    "fat": 9,
+    "baseWeight": 150
+  },
+  {
+    "id": 19,
+    "name": "Chicken Curry",
+    "category": "lunch",
+    "calories": 300,
+    "protein": 25,
+    "carbs": 15,
+    "fat": 15,
+    "baseWeight": 200
+  },
+  {
+    "id": 20,
+    "name": "Fish Curry",
+    "category": "lunch",
+    "calories": 250,
+    "protein": 18,
+    "carbs": 10,
+    "fat": 15,
+    "baseWeight": 200
+  },
+  {
+    "id": 21,
+    "name": "Chapati",
+    "category": "dinner",
+    "calories": 100,
+    "protein": 3,
+    "carbs": 20,
+    "fat": 1,
+    "baseWeight": 30
+  },
+  {
+    "id": 22,
+    "name": "Roti",
+    "category": "dinner",
+    "calories": 110,
+    "protein": 3.2,
+    "carbs": 22,
+    "fat": 1.5,
+    "baseWeight": 35
+  },
+  {
+    "id": 23,
+    "name": "Phulka",
+    "category": "dinner",
+    "calories": 85,
+    "protein": 2.5,
+    "carbs": 17,
+    "fat": 0.5,
+    "baseWeight": 25
+  },
+  {
+    "id": 24,
+    "name": "Vegetable Khichdi",
+    "category": "dinner",
+    "calories": 200,
+    "protein": 6,
+    "carbs": 32,
+    "fat": 5,
+    "baseWeight": 200
+  },
+  {
+    "id": 25,
+    "name": "Dal Khichdi",
+    "category": "dinner",
+    "calories": 280,
+    "protein": 9,
+    "carbs": 45,
+    "fat": 6,
+    "baseWeight": 250
+  },
+  {
+    "id": 26,
+    "name": "Paneer Bhurji",
+    "category": "dinner",
+    "calories": 250,
+    "protein": 11,
+    "carbs": 15,
+    "fat": 18,
+    "baseWeight": 150
+  },
+  {
+    "id": 27,
+    "name": "Egg Curry",
+    "category": "dinner",
+    "calories": 220,
+    "protein": 14,
+    "carbs": 15,
+    "fat": 13,
+    "baseWeight": 200
+  },
+  {
+    "id": 28,
+    "name": "Grilled Chicken",
+    "category": "dinner",
+    "calories": 160,
+    "protein": 31,
+    "carbs": 0,
+    "fat": 3,
+    "baseWeight": 100
+  },
+  {
+    "id": 29,
+    "name": "Vegetable Pulao",
+    "category": "dinner",
+    "calories": 250,
+    "protein": 6,
+    "carbs": 45,
+    "fat": 7,
+    "baseWeight": 200
+  },
+  {
+    "id": 30,
+    "name": "Curd Rice",
+    "category": "dinner",
+    "calories": 200,
+    "protein": 6,
+    "carbs": 40,
+    "fat": 4,
+    "baseWeight": 200
+  },
+  {
+    "id": 31,
+    "name": "Samosa",
+    "category": "snack",
+    "calories": 250,
+    "protein": 4,
+    "carbs": 30,
+    "fat": 14,
+    "baseWeight": 100
+  },
+  {
+    "id": 32,
+    "name": "Pakora",
+    "category": "snack",
+    "calories": 300,
+    "protein": 5,
+    "carbs": 30,
+    "fat": 15,
+    "baseWeight": 100
+  },
+  {
+    "id": 33,
+    "name": "Bhel Puri",
+    "category": "snack",
+    "calories": 280,
+    "protein": 7,
+    "carbs": 45,
+    "fat": 10,
+    "baseWeight": 150
+  },
+  {
+    "id": 34,
+    "name": "Sev Puri",
+    "category": "snack",
+    "calories": 250,
+    "protein": 5,
+    "carbs": 35,
+    "fat": 10,
+    "baseWeight": 150
+  },
+  {
+    "id": 35,
+    "name": "Dhokla",
+    "category": "snack",
+    "calories": 160,
+    "protein": 6,
+    "carbs": 25,
+    "fat": 4,
+    "baseWeight": 100
+  },
+  {
+    "id": 36,
+    "name": "Vada Pav",
+    "category": "snack",
+    "calories": 320,
+    "protein": 7,
+    "carbs": 40,
+    "fat": 15,
+    "baseWeight": 150
+  },
+  {
+    "id": 37,
+    "name": "Pani Puri",
+    "category": "snack",
+    "calories": 180,
+    "protein": 4,
+    "carbs": 30,
+    "fat": 6,
+    "baseWeight": 100
+  },
+  {
+    "id": 38,
+    "name": "Roasted Peanuts",
+    "category": "snack",
+    "calories": 160,
+    "protein": 7,
+    "carbs": 6,
+    "fat": 14,
+    "baseWeight": 30
+  },
+  {
+    "id": 39,
+    "name": "Boiled Corn",
+    "category": "snack",
+    "calories": 150,
+    "protein": 5,
+    "carbs": 30,
+    "fat": 1.5,
+    "baseWeight": 100
+  },
+  {
+    "id": 40,
+    "name": "Sprouts Salad",
+    "category": "snack",
+    "calories": 120,
+    "protein": 8,
+    "carbs": 20,
+    "fat": 1,
+    "baseWeight": 100
+  },
+  {
+    "id": 41,
+    "name": "Banana",
+    "category": "fruit",
+    "calories": 105,
+    "protein": 1.3,
+    "carbs": 27,
+    "fat": 0.3,
+    "baseWeight": 120
+  },
+  {
+    "id": 42,
+    "name": "Apple",
+    "category": "fruit",
+    "calories": 95,
+    "protein": 0.5,
+    "carbs": 25,
+    "fat": 0.3,
+    "baseWeight": 150
+  },
+  {
+    "id": 43,
+    "name": "Mango",
+    "category": "fruit",
+    "calories": 150,
+    "protein": 1.5,
+    "carbs": 35,
+    "fat": 0.5,
+    "baseWeight": 200
+  },
+  {
+    "id": 44,
+    "name": "Papaya",
+    "category": "fruit",
+    "calories": 60,
+    "protein": 0.5,
+    "carbs": 15,
+    "fat": 0.1,
+    "baseWeight": 150
+  },
+  {
+    "id": 45,
+    "name": "Guava",
+    "category": "fruit",
+    "calories": 40,
+    "protein": 1.5,
+    "carbs": 10,
+    "fat": 0.3,
+    "baseWeight": 100
+  },
+  {
+    "id": 46,
+    "name": "Pomegranate",
+    "category": "fruit",
+    "calories": 230,
+    "protein": 4.7,
+    "carbs": 50,
+    "fat": 3,
+    "baseWeight": 200
+  },
+  {
+    "id": 47,
+    "name": "Masala Chai",
+    "category": "drink",
+    "calories": 100,
+    "protein": 3,
+    "carbs": 15,
+    "fat": 3,
+    "baseWeight": 150
+  },
+  {
+    "id": 48,
+    "name": "Buttermilk",
+    "category": "drink",
+    "calories": 60,
+    "protein": 5,
+    "carbs": 8,
+    "fat": 1,
+    "baseWeight": 200
+  },
+  {
+    "id": 49,
+    "name": "Lassi",
+    "category": "drink",
+    "calories": 200,
+    "protein": 6,
+    "carbs": 30,
+    "fat": 6,
+    "baseWeight": 250
+  },
+  {
+    "id": 50,
+    "name": "Coconut Water",
+    "category": "drink",
+    "calories": 45,
+    "protein": 1,
+    "carbs": 10,
+    "fat": 0.2,
+    "baseWeight": 250
+  },
+  {
+    "id": 51,
+    "name": "Lemon Water",
+    "category": "drink",
+    "calories": 60,
+    "protein": 0,
+    "carbs": 15,
+    "fat": 0,
+    "baseWeight": 250
+  }
+]

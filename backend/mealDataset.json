@@ -1,0 +1,242 @@
+{
+  "breakfast": [
+    {
+      "name": "Idli with Sambar",
+      "ingredients": [
+        "Idli",
+        "Sambar"
+      ],
+      "calories": 270
+    },
+    {
+      "name": "Dosa with Sambar",
+      "ingredients": [
+        "Dosa",
+        "Sambar"
+      ],
+      "calories": 270
+    },
+    {
+      "name": "Masala Dosa",
+      "ingredients": [
+        "Masala Dosa"
+      ],
+      "calories": 250
+    },
+    {
+      "name": "Upma with Buttermilk",
+      "ingredients": [
+        "Upma",
+        "Buttermilk"
+      ],
+      "calories": 260
+    },
+    {
+      "name": "Poha with Masala Chai",
+      "ingredients": [
+        "Poha",
+        "Masala Chai"
+      ],
+      "calories": 375
+    },
+    {
+      "name": "Paratha",
+      "ingredients": [
+        "Paratha"
+      ],
+      "calories": 350
+    },
+    {
+      "name": "Aloo Paratha with Buttermilk",
+      "ingredients": [
+        "Aloo Paratha",
+        "Buttermilk"
+      ],
+      "calories": 360
+    },
+    {
+      "name": "Pongal with Sambar",
+      "ingredients": [
+        "Pongal",
+        "Sambar"
+      ],
+      "calories": 400
+    },
+    {
+      "name": "Rava Dosa with Sambar",
+      "ingredients": [
+        "Rava Dosa",
+        "Sambar"
+      ],
+      "calories": 330
+    },
+    {
+      "name": "Appam with Vegetable Curry",
+      "ingredients": [
+        "Appam",
+        "Vegetable Curry"
+      ],
+      "calories": 300
+    }
+  ],
+  "lunch": [
+    {
+      "name": "Steamed Rice with Dal Tadka",
+      "ingredients": [
+        "Steamed Rice",
+        "Dal Tadka"
+      ],
+      "calories": 405
+    },
+    {
+      "name": "Jeera Rice with Rajma",
+      "ingredients": [
+        "Jeera Rice",
+        "Rajma"
+      ],
+      "calories": 590
+    },
+    {
+      "name": "Steamed Rice with Chole",
+      "ingredients": [
+        "Steamed Rice",
+        "Chole"
+      ],
+      "calories": 455
+    },
+    {
+      "name": "Paneer Butter Masala with Roti",
+      "ingredients": [
+        "Paneer Butter Masala",
+        "Roti"
+      ],
+      "calories": 560
+    },
+    {
+      "name": "Vegetable Curry with Chapati",
+      "ingredients": [
+        "Vegetable Curry",
+        "Chapati"
+      ],
+      "calories": 280
+    },
+    {
+      "name": "Chicken Curry with Steamed Rice",
+      "ingredients": [
+        "Chicken Curry",
+        "Steamed Rice"
+      ],
+      "calories": 505
+    },
+    {
+      "name": "Fish Curry with Steamed Rice",
+      "ingredients": [
+        "Fish Curry",
+        "Steamed Rice"
+      ],
+      "calories": 455
+    },
+    {
+      "name": "Rajma Chawal",
+      "ingredients": [
+        "Rajma",
+        "Steamed Rice"
+      ],
+      "calories": 545
+    },
+    {
+      "name": "Chole with Phulka",
+      "ingredients": [
+        "Chole",
+        "Phulka"
+      ],
+      "calories": 335
+    },
+    {
+      "name": "Paneer Butter Masala with Chapati",
+      "ingredients": [
+        "Paneer Butter Masala",
+        "Chapati"
+      ],
+      "calories": 550
+    }
+  ],
+  "dinner": [
+    {
+      "name": "Vegetable Khichdi",
+      "ingredients": [
+        "Vegetable Khichdi"
+      ],
+      "calories": 200
+    },
+    {
+      "name": "Dal Khichdi",
+      "ingredients": [
+        "Dal Khichdi"
+      ],
+      "calories": 280
+    },
+    {
+      "name": "Paneer Bhurji with Roti",
+      "ingredients": [
+        "Paneer Bhurji",
+        "Roti"
+      ],
+      "calories": 360
+    },
+    {
+      "name": "Egg Curry with Chapati",
+      "ingredients": [
+        "Egg Curry",
+        "Chapati"
+      ],
+      "calories": 320
+    },
+    {
+      "name": "Grilled Chicken with Sprouts Salad",
+      "ingredients": [
+        "Grilled Chicken",
+        "Sprouts Salad"
+      ],
+      "calories": 280
+    },
+    {
+      "name": "Vegetable Pulao",
+      "ingredients": [
+        "Vegetable Pulao"
+      ],
+      "calories": 250
+    },
+    {
+      "name": "Curd Rice",
+      "ingredients": [
+        "Curd Rice"
+      ],
+      "calories": 200
+    },
+    {
+      "name": "Phulka with Dal Tadka",
+      "ingredients": [
+        "Phulka",
+        "Dal Tadka"
+      ],
+      "calories": 285
+    },
+    {
+      "name": "Chapati with Vegetable Curry",
+      "ingredients": [
+        "Chapati",
+        "Vegetable Curry"
+      ],
+      "calories": 280
+    },
+    {
+      "name": "Roti with Paneer Bhurji",
+      "ingredients": [
+        "Roti",
+        "Paneer Bhurji"
+      ],
+      "calories": 360
+    }
+  ]
+}

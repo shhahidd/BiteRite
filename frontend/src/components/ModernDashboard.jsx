@@ -323,6 +323,13 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
             .then(data => setGroceryList(data))
             .catch(err => console.error("Could not fetch grocery list", err));
 
+        fetch('http://localhost:5000/api/fridge')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.ingredients) setFridgeIngredients(data.ingredients);
+            })
+            .catch(err => console.error("Could not fetch fridge list", err));
+
         fetch(`http://localhost:5000/history?days=${historyDays}`)
             .then(res => res.json())
             .then(data => setMealHistory(data))
@@ -389,6 +396,18 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
 
         fetchAllData(formattedApiDate);
     }, []);
+
+    const saveFridgeToSupabase = async (ingredientsVal) => {
+        try {
+            await fetch('http://localhost:5000/api/fridge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ingredients: ingredientsVal })
+            });
+        } catch (err) {
+            console.error("Failed to save fridge", err);
+        }
+    };
 
     const findMealsFromFridge = async () => {
         if (!fridgeIngredients.trim()) return;
@@ -712,6 +731,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                             placeholder="item: portion, ..."
                             value={fridgeIngredients}
                             onChange={(e) => setFridgeIngredients(e.target.value)}
+                            onBlur={(e) => saveFridgeToSupabase(e.target.value)}
                             style={{ height: '36px', fontSize: '0.8rem', flex: 1 }}
                         />
                         <button className="btn-primary" onClick={findMealsFromFridge} style={{ padding: '0 1rem', fontSize: '0.8rem', width: 'auto' }}>AI Plan</button>

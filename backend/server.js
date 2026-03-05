@@ -435,6 +435,50 @@ app.get('/grocery-list', (req, res) => {
     }
 });
 
+// GET /api/fridge (Supabase)
+app.get('/api/fridge', async (req, res) => {
+    try {
+        const { data, error } = await supabase.from('user_fridge').select('*').limit(1);
+        if (error) {
+            console.error("Supabase GET error:", error.message);
+            return res.json({ ingredients: '' }); // Fallback
+        }
+        res.json(data[0] || { ingredients: '' });
+    } catch (err) {
+        console.error("Fatal Fridge GET Error:", err);
+        res.status(500).json({ error: 'Failed to fetch fridge' });
+    }
+});
+
+// POST /api/fridge (Supabase)
+app.post('/api/fridge', async (req, res) => {
+    const { ingredients } = req.body;
+    try {
+        const { data: existing, error: selectErr } = await supabase.from('user_fridge').select('*').limit(1);
+        if (selectErr && selectErr.code !== 'PGRST116') {
+            console.error("Supabase select error:", selectErr.message);
+        }
+
+        let upsertError = null;
+        if (existing && existing.length > 0) {
+            const { error } = await supabase.from('user_fridge').update({ ingredients }).eq('id', existing[0].id);
+            upsertError = error;
+        } else {
+            const { error } = await supabase.from('user_fridge').insert([{ ingredients }]);
+            upsertError = error;
+        }
+
+        if (upsertError) {
+            console.error("Supabase upsert error:", upsertError.message);
+            return res.status(500).json({ error: 'Database update failed' });
+        }
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Fatal Fridge POST Error:", err);
+        res.status(500).json({ error: 'Failed to update fridge' });
+    }
+});
+
 // GET /activity-trends
 app.get('/activity-trends', (req, res) => {
     try {
@@ -536,7 +580,7 @@ app.post('/api/ai/chat', async (req, res) => {
             messages: [
                 {
                     role: 'system',
-                    content: `You are a helpful AI Nutritional Assistant integrated into a premium health planner app. 
+                    content: `You are a helpful AI BiteRite Assistant integrated into a premium health planner app. 
                     You specialize in Indian cuisine, healthy living, and personalized nutrition advice. 
                     Ground your responses in the following knowledge base:
                     

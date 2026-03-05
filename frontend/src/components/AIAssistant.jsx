@@ -4,7 +4,7 @@ import { Send, Bot, User, Trash2, Sparkles, AlertCircle, Loader2 } from 'lucide-
 
 const AIAssistant = () => {
     const [messages, setMessages] = useState([
-        { role: 'assistant', content: 'Namaste! I am your AI Nutritional Assistant. How can I help you reach your health goals today?' }
+        { role: 'assistant', content: 'Namaste! I am your AI BiteRite Assistant. How can I help you reach your health goals today?' }
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);

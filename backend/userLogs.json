@@ -712,5 +712,43 @@
     "type": "fasting",
     "startTime": "00:02",
     "endTime": "13:00"
+  },
+  {
+    "id": 1772681620476,
+    "date": "2026-03-05",
+    "type": "activity",
+    "activityType": "steps",
+    "value": 10000,
+    "unit": "steps"
+  },
+  {
+    "id": 1772681633929,
+    "date": "2026-03-05",
+    "type": "activity",
+    "activityType": "sleep",
+    "value": 8,
+    "unit": "hours"
+  },
+  {
+    "id": 1772681651215,
+    "date": "2026-03-05",
+    "type": "activity",
+    "activityType": "workout",
+    "value": 45,
+    "unit": "mins"
+  },
+  {
+    "id": 1772683311130,
+    "date": "2026-03-05",
+    "mealType": "snack2",
+    "weight": 100,
+    "food": {
+      "id": "Chicken sweet corn soup",
+      "name": "Chicken sweet corn soup",
+      "calories": 28,
+      "protein": 14.5,
+      "carbs": 1.6,
+      "fat": 12.6
+    }
   }
 ]

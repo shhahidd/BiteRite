@@ -112,7 +112,7 @@ function App() {
       <aside className="sidebar">
         <div className="sidebar-header">
           <Menu className="menu-icon" size={28} />
-          <h2>Nutritional Planner</h2>
+          <h2>BiteRite</h2>
         </div>
 
         <nav className="sidebar-nav">

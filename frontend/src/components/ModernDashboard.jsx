@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AIAssistant from './AIAssistant';
-import { Activity, Search, Info, MessageSquare } from 'lucide-react';
-
-// Import meal images from assets to ensure Vite hashes and links them correctly for production
-import breakfastImg from '../assets/breakfast.png';
-import lunchImg from '../assets/lunch.png';
-import dinnerImg from '../assets/dinner.png';
-import snackImg from '../assets/snack.png';
+import { Menu, Bot, Activity, Moon, Flame, Footprints, ChevronLeft, ChevronRight, Calendar, Search, Info, MessageSquare } from 'lucide-react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -621,31 +615,31 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                     <div className={`meal-col ${dailySummary.meals.breakfast.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🥄</span></div>
                         <div className="meal-name">Breakfast</div>
-                        <div className="meal-image-container"><img src={breakfastImg} alt="Breakfast" /></div>
+                        <div className="meal-image-container"><img src="/breakfast.png" alt="Breakfast" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.snack1?.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🥛</span></div>
                         <div className="meal-name">Snack 1</div>
-                        <div className="meal-image-container"><img src={snackImg} alt="Snack 1" /></div>
+                        <div className="meal-image-container"><img src="/snack.png" alt="Snack 1" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.lunch.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🍴</span></div>
                         <div className="meal-name">Lunch</div>
-                        <div className="meal-image-container"><img src={lunchImg} alt="Lunch" /></div>
+                        <div className="meal-image-container"><img src="/lunch.png" alt="Lunch" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.snack2?.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🥜</span></div>
                         <div className="meal-name">Snack 2</div>
-                        <div className="meal-image-container"><img src={snackImg} alt="Snack 2" /></div>
+                        <div className="meal-image-container"><img src="/snack.png" alt="Snack 2" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.dinner.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🍴</span></div>
                         <div className="meal-name">Dinner</div>
-                        <div className="meal-image-container"><img src={dinnerImg} alt="Dinner" /></div>
+                        <div className="meal-image-container"><img src="/dinner.png" alt="Dinner" /></div>
                     </div>
 
                 </div>

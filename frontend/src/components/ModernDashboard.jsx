@@ -614,31 +614,31 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                     <div className={`meal-col ${dailySummary.meals.breakfast.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🥄</span></div>
                         <div className="meal-name">Breakfast</div>
-                        <div className="meal-image-container"><img src="/breakfast.png" alt="Breakfast" /></div>
+                        <div className="meal-image-container"><img src={`${import.meta.env.BASE_URL}breakfast.png`} alt="Breakfast" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.snack1?.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🥛</span></div>
                         <div className="meal-name">Snack 1</div>
-                        <div className="meal-image-container"><img src="/snack.png" alt="Snack 1" /></div>
+                        <div className="meal-image-container"><img src={`${import.meta.env.BASE_URL}snack.png`} alt="Snack 1" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.lunch.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🍴</span></div>
                         <div className="meal-name">Lunch</div>
-                        <div className="meal-image-container"><img src="/lunch.png" alt="Lunch" /></div>
+                        <div className="meal-image-container"><img src={`${import.meta.env.BASE_URL}lunch.png`} alt="Lunch" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.snack2?.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🥜</span></div>
                         <div className="meal-name">Snack 2</div>
-                        <div className="meal-image-container"><img src="/snack.png" alt="Snack 2" /></div>
+                        <div className="meal-image-container"><img src={`${import.meta.env.BASE_URL}snack.png`} alt="Snack 2" /></div>
                     </div>
 
                     <div className={`meal-col ${dailySummary.meals.dinner.length > 0 ? 'completed' : ''}`}>
                         <div className="meal-icon-wrapper"><span style={{ fontSize: '12px' }}>🍴</span></div>
                         <div className="meal-name">Dinner</div>
-                        <div className="meal-image-container"><img src="/dinner.png" alt="Dinner" /></div>
+                        <div className="meal-image-container"><img src={`${import.meta.env.BASE_URL}dinner.png`} alt="Dinner" /></div>
                     </div>
 
                 </div>

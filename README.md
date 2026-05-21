@@ -1,122 +1,92 @@
-AI Nutrition Planner
+# BiteRite: Smart Nutrition, Smarter Life
 
-AI Nutrition Planner is a web application that helps users quickly check the nutritional values of foods and get intelligent nutrition guidance. The system combines a structured nutrition dataset with a locally running AI model to answer health and fitness related questions.
+BiteRite is a web based health and nutrition platform developed during a **Mini Hackathon organized by the BCA Department at college**. The project was created within a limited time frame with the goal of simplifying nutrition tracking and helping users make smarter health decisions through AI driven features.
 
-The goal of the project is to provide a simple nutrition assistant that can estimate calories, macros, and provide basic dietary insights for Indian food items.
+The platform combines health monitoring, meal management, and intelligent recommendations into a centralized system designed to create a seamless user experience.
 
-Features
+## Project Description
 
-Food Nutrition Lookup
-Search foods and instantly view calories, protein, carbohydrates, and fats.
+Maintaining proper nutrition can often feel overwhelming due to complex dietary requirements and excessive information. BiteRite aims to solve this problem by providing a centralized platform where users can monitor health metrics, track nutrition, receive personalized recommendations, and manage meal planning more efficiently. :contentReference[oaicite:1]{index=1}
 
-AI Nutrition Assistant
-Ask questions about diet, fitness, or food nutrition and receive AI generated responses.
+## Features
 
-Meal Nutrition Awareness
-Understand the nutritional composition of common Indian dishes.
+### Nutrition Dashboard
+- Track overall progress and health goals
+- Daily calorie tracking
+- Diet monitoring
+- Water intake tracking
+- Fasting timer management
 
-Local AI Processing
-The AI model runs locally using Ollama so no external API calls are required.
+### Meal Management
+- Log breakfast, lunch, dinner, and snacks
+- Daily meal tracking system
+- Nutrition based meal organization
 
-Dataset Driven Accuracy
-Uses a processed Indian food nutrition dataset containing over 1000 food items.
+### Health Tracking
+- Sleep tracking
+- Step counter
+- Workout tracking
+- Activity monitoring
 
-Tech Stack
+### AI Powered Features
+- Personalized nutrition recommendations
+- AI nutrition assistant
+- Meal suggestions
+- Smart health insights
 
-Frontend
-React
+### Smart Meal Planning Tools
 
-Backend
-Node.js
-Express.js
+#### Grocery List Generator
+- Generates shopping lists automatically
+- Creates lists based on meal preferences
+- Helps reduce food waste
 
-AI Model
-Phi 3 Mini running locally using Ollama
+#### My Fridge
+- Suggests meals using available ingredients
+- Uses AI for meal generation
+- Helps save money and improve food utilization
 
-Data
-Indian Food Nutrition Dataset (CSV converted to JSON)
+### Food Search
+- Search food items and nutritional information instantly
 
-System Architecture
+## Technology Stack
 
-User Interface (React)
-↓
-Backend API (Node.js + Express)
-↓
-Nutrition Dataset Lookup
-↓
-AI Model via Ollama (Phi 3 Mini)
+### Frontend
+- ReactJS
 
-The system first checks the nutrition dataset for exact information. If the user asks a general health or diet related question, the request is sent to the AI model.
+### Backend
+- Supabase
+- Node.js
+- Express
 
-Installation
+### Data
+- JSON
+- CSV Dataset
 
-Clone the repository
+### AI Technologies
+- Antigravity AI
+- Google Gemini
+- Phi 3 via Ollama
 
-git clone https://github.com/yourusername/ai-nutrition-planner.git cd ai-nutrition-planner 
+## Development Context
 
-Install backend dependencies
+This project was developed during a mini hackathon challenge where ideas had to be designed and implemented within a limited timeframe. The focus was on creativity, problem solving, rapid development, and building a practical health based solution.
 
-npm install 
+## Future Scope
 
-Install frontend dependencies
+Planned improvements include:
 
-cd frontend npm install 
+- Barcode scanning
+- Smartwatch integration
+- Meal image recognition
+- Nutrient deficiency detection
+- Recipe sharing platform
+- Personal nutrition coach support
 
-Running the AI Model
+## Note
 
-Install Ollama
+This project was developed for educational and hackathon purposes and demonstrates practical implementation of AI powered health and nutrition management systems. :contentReference[oaicite:2]{index=2}
 
-https://ollama.com
+## Author
 
-Download the Phi 3 model
-
-ollama run phi3 
-
-Start the Ollama server
-
-ollama serve 
-
-The model will now run locally and be accessible via
-
-http://localhost:11434 
-
-Running the Project
-
-Start the backend server
-
-node server.js 
-
-Start the frontend
-
-npm start 
-
-Open the application in your browser
-
-http://localhost:3000 
-
-Example Queries
-
-How many calories are in dosa
-Is paneer good for muscle gain
-Which foods are high in protein
-What foods help with weight loss
-
-Project Structure
-
-ai-nutrition-planner │ ├── backend │ ├── server.js │ ├── nutrition_knowledge.txt │ └── foods.json │ ├── frontend │ ├── src │ ├── components │ └── App.js │ └── dataset └── Indian_Food_Nutrition_Processed.csv 
-
-Future Improvements
-
-Personalized diet recommendations
-Meal plan generation based on calorie targets
-Food image recognition for nutrition estimation
-Integration with wearable health devices
-
-Disclaimer
-
-This application provides general nutritional information and should not be considered medical advice. Users should consult qualified healthcare professionals for dietary recommendations.
-
-License
-
-This project is released under the MIT License.
-
+Shahid Patel

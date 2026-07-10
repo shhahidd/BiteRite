@@ -80,7 +80,7 @@ const getMealDataset = () => {
 };
 
 // POST /calculate
-app.post('/calculate', (req, res) => {
+apiRouter.post('/calculate', (req, res) => {
     const { age, gender, height, weight, activity, goal } = req.body;
     if (!age || !gender || !height || !weight || !activity || !goal) {
         return res.status(400).json({ error: 'Missing required parameters' });
@@ -113,7 +113,7 @@ app.post('/calculate', (req, res) => {
 });
 
 // GET /mealplan
-app.get('/mealplan', (req, res) => {
+apiRouter.get('/mealplan', (req, res) => {
     const mealDataset = getMealDataset();
     const breakfast = mealDataset.breakfast[Math.floor(Math.random() * mealDataset.breakfast.length)];
     const lunch = mealDataset.lunch[Math.floor(Math.random() * mealDataset.lunch.length)];
@@ -122,12 +122,12 @@ app.get('/mealplan', (req, res) => {
 });
 
 // GET /foods
-app.get('/foods', (req, res) => {
+apiRouter.get('/foods', (req, res) => {
     res.json(getFoodDataset());
 });
 
 // GET /search-foods
-app.get('/search-foods', async (req, res) => {
+apiRouter.get('/search-foods', async (req, res) => {
     const query = req.query.query;
     if (!query) return res.json([]);
     const lowerQuery = query.toLowerCase();
@@ -179,7 +179,7 @@ app.get('/search-foods', async (req, res) => {
 if (!fs.existsSync(userLogsPath)) fs.writeFileSync(userLogsPath, JSON.stringify([]));
 
 // POST /log-food
-app.post('/log-food', async (req, res) => {
+apiRouter.post('/log-food', async (req, res) => {
     const { foodId, mealType, date, weight, userId } = req.body;
     if (!foodId || !mealType || !date || weight === undefined || !userId) return res.status(400).json({ error: 'Missing required parameters' });
 
@@ -253,7 +253,7 @@ app.post('/log-food', async (req, res) => {
 });
 
 // POST /log-fasting
-app.post('/log-fasting', (req, res) => {
+apiRouter.post('/log-fasting', (req, res) => {
     const { date, startTime, endTime, userId } = req.body;
     if (!date || !startTime || !endTime || !userId) return res.status(400).json({ error: 'Missing required parameters' });
     try {
@@ -268,7 +268,7 @@ app.post('/log-fasting', (req, res) => {
 });
 
 // GET /daily-summary
-app.get('/daily-summary', (req, res) => {
+apiRouter.get('/daily-summary', (req, res) => {
     const { date, userId } = req.query;
     if (!date || !userId) return res.status(400).json({ error: 'Missing date or userId' });
     try {
@@ -317,7 +317,7 @@ app.get('/daily-summary', (req, res) => {
 });
 
 // GET /weekly-summary
-app.get('/weekly-summary', (req, res) => {
+apiRouter.get('/weekly-summary', (req, res) => {
     try {
         const { userId } = req.query;
         if (!userId) return res.status(400).json({ error: 'Missing userId' });
@@ -347,7 +347,7 @@ app.get('/weekly-summary', (req, res) => {
 });
 
 // GET /history
-app.get('/history', (req, res) => {
+apiRouter.get('/history', (req, res) => {
     try {
         const { days, userId } = req.query;
         if (!userId) return res.status(400).json({ error: 'Missing userId' });
@@ -393,7 +393,7 @@ app.get('/history', (req, res) => {
 
 // GET /grocery-list
 // GET /predict-grocery
-app.get('/predict-grocery', (req, res) => {
+apiRouter.get('/predict-grocery', (req, res) => {
     try {
         const { userId } = req.query;
         if (!userId) return res.status(400).json({ error: 'Missing userId' });
@@ -438,7 +438,7 @@ app.get('/predict-grocery', (req, res) => {
     }
 });
 
-app.get('/grocery-list', (req, res) => {
+apiRouter.get('/grocery-list', (req, res) => {
     try {
         const { userId } = req.query;
         if (!userId) return res.status(400).json({ error: 'Missing userId' });
@@ -474,7 +474,7 @@ app.get('/grocery-list', (req, res) => {
 });
 
 // GET /api/fridge (Supabase)
-app.get('/api/fridge', async (req, res) => {
+apiRouter.get('/fridge', async (req, res) => {
     try {
         const { userId } = req.query;
         if (!userId) return res.status(400).json({ error: 'Missing userId' });
@@ -505,7 +505,7 @@ app.get('/api/fridge', async (req, res) => {
 });
 
 // POST /api/fridge (Supabase)
-app.post('/api/fridge', async (req, res) => {
+apiRouter.post('/fridge', async (req, res) => {
     const { ingredients, userId } = req.body;
     if (!userId) return res.status(400).json({ error: 'Missing userId' });
     
@@ -546,7 +546,7 @@ app.post('/api/fridge', async (req, res) => {
 });
 
 // GET /activity-trends
-app.get('/activity-trends', (req, res) => {
+apiRouter.get('/activity-trends', (req, res) => {
     try {
         const { userId } = req.query;
         if (!userId) return res.status(400).json({ error: 'Missing userId' });
@@ -593,7 +593,7 @@ app.get('/activity-trends', (req, res) => {
 });
 
 // POST /log-activity (Steps, Sleep, Workout)
-app.post('/log-activity', (req, res) => {
+apiRouter.post('/log-activity', (req, res) => {
     const { type, value, date, unit, userId } = req.body;
     if (!type || !value || !date || !userId) return res.status(400).json({ error: 'Missing parameters' });
     try {
@@ -608,7 +608,7 @@ app.post('/log-activity', (req, res) => {
 });
 
 // POST /fridge-meals
-app.post('/fridge-meals', (req, res) => {
+apiRouter.post('/fridge-meals', (req, res) => {
     const { ingredients } = req.body;
     if (!ingredients || !Array.isArray(ingredients)) return res.status(400).json({ error: 'Invalid' });
 
@@ -631,7 +631,7 @@ app.post('/fridge-meals', (req, res) => {
 });
 
 // POST /api/ai/chat (Proxy to local Ollama)
-app.post('/api/ai/chat', async (req, res) => {
+apiRouter.post('/ai/chat', async (req, res) => {
     const { messages } = req.body;
     if (!messages || !Array.isArray(messages)) return res.status(400).json({ error: 'Invalid messages' });
 

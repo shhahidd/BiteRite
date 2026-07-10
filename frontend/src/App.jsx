@@ -10,6 +10,7 @@ import JustCurious from './components/JustCurious';
 import About from './components/About';
 import AIAssistant from './components/AIAssistant';
 import { Activity, Search, Info, MessageSquare } from 'lucide-react';
+import { API_BASE_URL } from './config';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -95,7 +96,7 @@ function App() {
         localStorage.setItem(`userMacros_${user.emailid}`, JSON.stringify(newMacrosData));
       }
 
-      const mealResponse = await axios.get('http://localhost:5000/mealplan');
+      const mealResponse = await axios.get(`${API_BASE_URL}/mealplan`);
       setMealPlan(mealResponse.data);
 
       setSuccess("Profile updated successfully!");
@@ -110,7 +111,7 @@ function App() {
 
   useEffect(() => {
     // Fetch an initial meal plan so the home page isn't empty
-    axios.get('http://localhost:5000/mealplan')
+    axios.get(`${API_BASE_URL}/mealplan`)
       .then(res => setMealPlan(res.data))
       .catch(err => {
         console.error("Could not fetch default meal plan", err);

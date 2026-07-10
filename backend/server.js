@@ -9,8 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Supabase Configuration
-const supabaseUrl = 'https://vvuradtmdbftxahfvusu.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2dXJhZHRtZGJmdHhhaGZ2dXN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MzYyNDIsImV4cCI6MjA4ODIxMjI0Mn0.RDz9W4pUKzaJQkAMA0TBm7I6bQRCVvsVR-K9ULfKlec';
+const supabaseUrl = 'https://cpjfpetvaopddakcfnee.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwamZwZXR2YW9wZGRha2NmbmVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NzA3MjQsImV4cCI6MjA5OTI0NjcyNH0.Zw3CceyE4fh7-KRg8B0mIeicW8A-DxdRQHq-k0QdOYc';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(cors());
@@ -19,6 +19,29 @@ app.use(express.json());
 const foodDatasetPath = path.join(__dirname, 'foodDataset.json');
 const mealDatasetPath = path.join(__dirname, 'mealDataset.json');
 const userLogsPath = path.join(__dirname, 'userLogs.json');
+const userFridgePath = path.join(__dirname, 'userFridge.json');
+
+const getUserFridge = () => {
+    try {
+        if (!fs.existsSync(userFridgePath)) {
+            fs.writeFileSync(userFridgePath, JSON.stringify({}));
+            return {};
+        }
+        const data = fs.readFileSync(userFridgePath, 'utf8');
+        return data ? JSON.parse(data) : {};
+    } catch (err) {
+        console.error("Error reading userFridge:", err);
+        return {};
+    }
+};
+
+const saveUserFridge = (fridgeData) => {
+    try {
+        fs.writeFileSync(userFridgePath, JSON.stringify(fridgeData, null, 2));
+    } catch (err) {
+        console.error("Error writing userFridge:", err);
+    }
+};
 
 const getUserLogs = () => {
     try {
@@ -109,25 +132,24 @@ app.get('/search-foods', async (req, res) => {
     const lowerQuery = query.toLowerCase();
 
     try {
-        // 1. Try fetching from Supabase FoodSource first
+        // 1. Try fetching from Supabase FoodData first
         const { data: supabaseFoods, error } = await supabase
-            .from('FoodSource')
+            .from('FoodData')
             .select('*')
-            .ilike('Dish Name', `%${lowerQuery}%`)
+            .or(`"Dish Name".ilike.%${lowerQuery}%,name.ilike.%${lowerQuery}%`)
             .limit(20);
 
         if (!error && supabaseFoods && supabaseFoods.length > 0) {
             console.log(`Found ${supabaseFoods.length} items in Supabase. First item:`, JSON.stringify(supabaseFoods[0]));
             // Map Supabase columns to frontend expected format
-            // Based on user: Dish Name, Calories (kcal), Protein (g), Carbohydrates (g), Fats (g), BaseWeight
             const mappedFoods = supabaseFoods.map(food => ({
-                id: food.id || food['Dish Name'],
-                name: food['Dish Name'],
-                calories: parseFloat(food['Calories (kcal)']) || 0,
-                protein: parseFloat(food['Protein (g)']) || 0,
-                carbs: parseFloat(food['Carbohydrates (g)']) || parseFloat(food['Carbs (g)']) || 0,
-                fat: parseFloat(food['Fats (g)']) || parseFloat(food['Fat (g)']) || 0,
-                baseWeight: parseFloat(food['BaseWeight']) || 100
+                id: food.id || food['Dish Name'] || food['name'],
+                name: food['Dish Name'] || food['name'] || food['dish_name'] || food['DishName'],
+                calories: parseFloat(food['Calories (kcal)']) || parseFloat(food['calories']) || 0,
+                protein: parseFloat(food['Protein (g)']) || parseFloat(food['protein']) || 0,
+                carbs: parseFloat(food['Carbohydrates (g)']) || parseFloat(food['Carbs (g)']) || parseFloat(food['carbs']) || 0,
+                fat: parseFloat(food['Fats (g)']) || parseFloat(food['Fat (g)']) || parseFloat(food['fat']) || 0,
+                baseWeight: parseFloat(food['BaseWeight']) || parseFloat(food['base_weight']) || parseFloat(food['baseweight']) || 100
             }));
             return res.json(mappedFoods);
         }
@@ -165,26 +187,26 @@ app.post('/log-food', async (req, res) => {
 
     // 1. Try finding in Supabase
     try {
-        // Flexible lookup: by ID (if numeric) or by Dish Name
-        let query = supabase.from('FoodSource').select('*');
+        // Flexible lookup: by ID (if numeric) or by Dish Name / name
+        let query = supabase.from('FoodData').select('*');
         if (!isNaN(foodId)) {
-            query = query.or(`id.eq.${foodId},"Dish Name".eq."${foodId}"`);
+            query = query.or(`id.eq.${foodId},"Dish Name".eq."${foodId}",name.eq."${foodId}"`);
         } else {
-            query = query.eq('Dish Name', foodId);
+            query = query.or(`"Dish Name".eq."${foodId}",name.eq."${foodId}"`);
         }
 
         const { data, error } = await query.maybeSingle();
 
         if (!error && data) {
-            console.log("Found food in Supabase for logging:", data['Dish Name']);
+            console.log("Found food in Supabase for logging:", data['Dish Name'] || data['name']);
             food = {
-                id: data.id || data['Dish Name'],
-                name: data['Dish Name'],
+                id: data.id || data['Dish Name'] || data['name'],
+                name: data['Dish Name'] || data['name'] || data['dish_name'] || data['DishName'],
                 calories: parseFloat(data['Calories (kcal)']) || parseFloat(data['calories']) || 0,
                 protein: parseFloat(data['Protein (g)']) || parseFloat(data['protein']) || 0,
                 carbs: parseFloat(data['Carbs (g)']) || parseFloat(data['carbs']) || parseFloat(data['Carbohydrates (g)']) || 0,
                 fat: parseFloat(data['Fat (g)']) || parseFloat(data['fat']) || parseFloat(data['Fats (g)']) || 0,
-                baseWeight: parseFloat(data['BaseWeight']) || 100
+                baseWeight: parseFloat(data['BaseWeight']) || parseFloat(data['base_weight']) || parseFloat(data['baseweight']) || 100
             };
         } else if (error) {
             console.error("Supabase lookup error for logging:", error);
@@ -455,12 +477,26 @@ app.get('/api/fridge', async (req, res) => {
     try {
         const { userId } = req.query;
         if (!userId) return res.status(400).json({ error: 'Missing userId' });
-        const { data, error } = await supabase.from('user_fridge').select('*').eq('user_id', userId).limit(1);
-        if (error) {
-            console.error("Supabase GET error:", error.message);
-            return res.json({ ingredients: '' }); // Fallback
+        
+        let fridgeInfo = null;
+        try {
+            const { data, error } = await supabase.from('user_fridge').select('*').eq('user_id', userId).limit(1);
+            if (!error && data && data.length > 0) {
+                fridgeInfo = data[0];
+            } else if (error) {
+                console.warn("Supabase fridge query failed, using local fallback. Error:", error.message);
+            }
+        } catch (dbErr) {
+            console.warn("Supabase fridge query exception, using local fallback. Error:", dbErr.message);
         }
-        res.json(data[0] || { ingredients: '' });
+
+        if (fridgeInfo) {
+            return res.json(fridgeInfo);
+        }
+
+        // Local Fallback
+        const localFridge = getUserFridge();
+        res.json({ ingredients: localFridge[userId] || '' });
     } catch (err) {
         console.error("Fatal Fridge GET Error:", err);
         res.status(500).json({ error: 'Failed to fetch fridge' });
@@ -471,30 +507,41 @@ app.get('/api/fridge', async (req, res) => {
 app.post('/api/fridge', async (req, res) => {
     const { ingredients, userId } = req.body;
     if (!userId) return res.status(400).json({ error: 'Missing userId' });
+    
+    let savedInSupabase = false;
     try {
         const { data: existing, error: selectErr } = await supabase.from('user_fridge').select('*').eq('user_id', userId).limit(1);
-        if (selectErr && selectErr.code !== 'PGRST116') {
-            console.error("Supabase select error:", selectErr.message);
-        }
-
-        let upsertError = null;
-        if (existing && existing.length > 0) {
-            const { error } = await supabase.from('user_fridge').update({ ingredients }).eq('id', existing[0].id);
-            upsertError = error;
+        if (!selectErr) {
+            let upsertError = null;
+            if (existing && existing.length > 0) {
+                const { error } = await supabase.from('user_fridge').update({ ingredients }).eq('id', existing[0].id);
+                upsertError = error;
+            } else {
+                const { error } = await supabase.from('user_fridge').insert([{ ingredients, user_id: userId }]);
+                upsertError = error;
+            }
+            if (!upsertError) {
+                savedInSupabase = true;
+            } else {
+                console.warn("Supabase fridge upsert failed, using local fallback. Error:", upsertError.message);
+            }
         } else {
-            const { error } = await supabase.from('user_fridge').insert([{ ingredients, user_id: userId }]);
-            upsertError = error;
+            console.warn("Supabase fridge select failed, using local fallback. Error:", selectErr.message);
         }
-
-        if (upsertError) {
-            console.error("Supabase upsert error:", upsertError.message);
-            return res.status(500).json({ error: 'Database update failed' });
-        }
-        res.json({ success: true });
-    } catch (err) {
-        console.error("Fatal Fridge POST Error:", err);
-        res.status(500).json({ error: 'Failed to update fridge' });
+    } catch (dbErr) {
+        console.warn("Supabase fridge update exception, using local fallback. Error:", dbErr.message);
     }
+
+    // Always sync with local file as fallback/backup
+    try {
+        const localFridge = getUserFridge();
+        localFridge[userId] = ingredients;
+        saveUserFridge(localFridge);
+    } catch (err) {
+        console.error("Failed to save local fridge backup:", err);
+    }
+
+    res.json({ success: true, savedInSupabase });
 });
 
 // GET /activity-trends

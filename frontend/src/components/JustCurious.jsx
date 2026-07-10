@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Loader2, Info } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const JustCurious = () => {
     const [query, setQuery] = useState('');
@@ -18,7 +19,7 @@ const JustCurious = () => {
         if (!query.trim()) return;
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/search-foods?query=${query}`);
+            const res = await fetch(`${API_BASE_URL}/search-foods?query=${query}`);
             const data = await res.json();
             setResults(data);
             setSelectedFood(null);

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { Send, Bot, User, Trash2, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const AIAssistant = () => {
     const [messages, setMessages] = useState([
@@ -31,7 +32,7 @@ const AIAssistant = () => {
         setError(null);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/ai/chat', {
+            const response = await axios.post(`${API_BASE_URL}/api/ai/chat`, {
                 messages: newMessages
             });
             setMessages([...newMessages, response.data]);

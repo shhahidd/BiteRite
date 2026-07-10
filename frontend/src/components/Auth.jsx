@@ -18,28 +18,81 @@ const Auth = ({ onLogin }) => {
 
         try {
             if (isLogin) {
-                const { data, error } = await supabase
-                    .from('admin')
-                    .select('*')
-                    .eq('emailid', email)
-                    .eq('password', password)
-                    .single();
-
-                if (error || !data) {
-                    throw new Error('Invalid email or password');
+                let supabaseUser = null;
+                let fetchError = null;
+                try {
+                    const { data, error } = await supabase
+                        .from('UserInfo')
+                        .select('*')
+                        .eq('email', email)
+                        .eq('password', password)
+                        .single();
+                    if (!error && data) {
+                        // Map email to emailid for compatibility with the rest of the application
+                        supabaseUser = {
+                            ...data,
+                            emailid: data.email
+                        };
+                    } else {
+                        fetchError = error;
+                    }
+                } catch (dbErr) {
+                    fetchError = dbErr;
                 }
-                onLogin(data);
-            } else {
-                const { data, error } = await supabase
-                    .from('admin')
-                    .insert([
-                        { username, emailid: email, password }
-                    ])
-                    .select()
-                    .single();
 
-                if (error) throw error;
-                onLogin(data);
+                if (supabaseUser) {
+                    onLogin(supabaseUser);
+                } else {
+                    // Fallback to localStorage mock users list
+                    const mockUsers = JSON.parse(localStorage.getItem('mock_users') || '[]');
+                    const matchedUser = mockUsers.find(u => u.emailid === email && u.password === password);
+                    if (matchedUser) {
+                        console.log("Logged in via local mock users storage");
+                        onLogin(matchedUser);
+                    } else {
+                        if (fetchError && (fetchError.message?.includes('schema cache') || fetchError.code === 'PGRST205')) {
+                            throw new Error('Invalid email or password (or database tables are not initialized yet - try registering first)');
+                        } else {
+                            throw new Error('Invalid email or password');
+                        }
+                    }
+                }
+            } else {
+                let success = false;
+                let registeredUser = null;
+                try {
+                    const { data, error } = await supabase
+                        .from('UserInfo')
+                        .insert([
+                            { username, email: email, password }
+                        ])
+                        .select()
+                        .single();
+                    if (!error && data) {
+                        registeredUser = {
+                            ...data,
+                            emailid: data.email
+                        };
+                        success = true;
+                    }
+                } catch (dbErr) {
+                    console.error("Supabase sign up exception:", dbErr);
+                }
+
+                if (success && registeredUser) {
+                    onLogin(registeredUser);
+                } else {
+                    // Fallback to localStorage mock users list
+                    const mockUsers = JSON.parse(localStorage.getItem('mock_users') || '[]');
+                    if (mockUsers.some(u => u.emailid === email)) {
+                        throw new Error('Email already registered');
+                    }
+                    const newUser = { id: Date.now(), username, emailid: email, password };
+                    mockUsers.push(newUser);
+                    localStorage.setItem('mock_users', JSON.stringify(mockUsers));
+                    console.log("Registered via local mock users storage");
+                    onLogin(newUser);
+                }
             }
         } catch (err) {
             setError(err.message);

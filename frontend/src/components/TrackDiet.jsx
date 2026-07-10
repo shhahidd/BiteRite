@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Plus } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const TrackDiet = ({ user }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +25,7 @@ const TrackDiet = ({ user }) => {
     const loadDailySummary = async () => {
         setLoadingSummary(true);
         try {
-            const res = await axios.get(`http://localhost:5000/daily-summary?date=${todayStr}&userId=${user?.emailid}`);
+            const res = await axios.get(`${API_BASE_URL}/daily-summary?date=${todayStr}&userId=${user?.emailid}`);
             setDailySummary(res.data);
         } catch (err) {
             console.error("Failed to load daily summary", err);
@@ -43,7 +44,7 @@ const TrackDiet = ({ user }) => {
 
         setLoadingSearch(true);
         try {
-            const res = await axios.get(`http://localhost:5000/search-foods?query=${searchQuery}`);
+            const res = await axios.get(`${API_BASE_URL}/search-foods?query=${searchQuery}`);
             setSearchResults(res.data);
         } catch (err) {
             console.error("Search failed", err);
@@ -63,7 +64,7 @@ const TrackDiet = ({ user }) => {
     const logFood = async (foodId) => {
         const weight = parseFloat(selectedWeights[foodId]) || 100;
         try {
-            await axios.post('http://localhost:5000/log-food', {
+            await axios.post(`${API_BASE_URL}/log-food`, {
                 foodId,
                 mealType: selectedMealType,
                 date: todayStr,

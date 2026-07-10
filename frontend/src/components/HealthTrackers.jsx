@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Footprints, Dumbbell, CheckCircle, TrendingUp, Flame, MapPin, Zap, Info } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const HealthTrackers = ({ user }) => {
     const [stats, setStats] = useState({ steps: 0, sleep: 0, workout: 0 });
@@ -22,8 +23,8 @@ const HealthTrackers = ({ user }) => {
     const fetchAllData = async () => {
         try {
             const [statsRes, trendsRes] = await Promise.all([
-                fetch(`http://localhost:5000/daily-summary?date=${today}&userId=${user?.emailid}`),
-                fetch(`http://localhost:5000/activity-trends?userId=${user?.emailid}`)
+                fetch(`${API_BASE_URL}/daily-summary?date=${today}&userId=${user?.emailid}`),
+                fetch(`${API_BASE_URL}/activity-trends?userId=${user?.emailid}`)
             ]);
 
             const statsData = await statsRes.json();
@@ -63,7 +64,7 @@ const HealthTrackers = ({ user }) => {
         }
 
         try {
-            const res = await fetch('http://localhost:5000/log-activity', {
+            const res = await fetch(`${API_BASE_URL}/log-activity`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ type, value: val, unit, date: today, userId: user?.emailid })

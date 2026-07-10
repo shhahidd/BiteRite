@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AIAssistant from './AIAssistant';
 import { Menu, Bot, Activity, Moon, Flame, Footprints, ChevronLeft, ChevronRight, Calendar, Search, Info, MessageSquare } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -296,7 +297,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
         const d = fDate || apiDate;
         if (!d) return;
 
-        fetch(`http://localhost:5000/daily-summary?date=${d}&userId=${user?.emailid}`)
+        fetch(`${API_BASE_URL}/daily-summary?date=${d}&userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => {
                 if (data && data.totals) {
@@ -314,24 +315,24 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
             })
             .catch(err => console.error("Could not fetch daily summary", err));
 
-        fetch(`http://localhost:5000/weekly-summary?userId=${user?.emailid}`)
+        fetch(`${API_BASE_URL}/weekly-summary?userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => setWeeklyChartData(data))
             .catch(err => console.error("Could not fetch weekly summary", err));
 
-        fetch(`http://localhost:5000/grocery-list?userId=${user?.emailid}`)
+        fetch(`${API_BASE_URL}/grocery-list?userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => setGroceryList(data))
             .catch(err => console.error("Could not fetch grocery list", err));
 
-        fetch(`http://localhost:5000/api/fridge?userId=${user?.emailid}`)
+        fetch(`${API_BASE_URL}/api/fridge?userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => {
                 if (data && data.ingredients) setFridgeIngredients(data.ingredients);
             })
             .catch(err => console.error("Could not fetch fridge list", err));
 
-        fetch(`http://localhost:5000/history?days=${historyDays}&userId=${user?.emailid}`)
+        fetch(`${API_BASE_URL}/history?days=${historyDays}&userId=${user?.emailid}`)
             .then(res => res.json())
             .then(data => setMealHistory(data))
             .catch(err => console.error("Could not fetch history", err));
@@ -340,7 +341,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
     const fetchInsightData = async (date) => {
         setLoadingInsights(true);
         try {
-            const res = await fetch(`http://localhost:5000/daily-summary?date=${date}&userId=${user?.emailid}`);
+            const res = await fetch(`${API_BASE_URL}/daily-summary?date=${date}&userId=${user?.emailid}`);
             const data = await res.json();
             setInsightData(data);
         } catch (err) {
@@ -400,7 +401,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
 
     const saveFridgeToSupabase = async (ingredientsVal) => {
         try {
-            await fetch('http://localhost:5000/api/fridge', {
+            await fetch(`${API_BASE_URL}/api/fridge`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ingredients: ingredientsVal, userId: user?.emailid })
@@ -419,7 +420,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                 const parts = i.split(':');
                 return parts[0].trim();
             });
-            const res = await fetch('http://localhost:5000/fridge-meals', {
+            const res = await fetch(`${API_BASE_URL}/fridge-meals`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ingredients: ings })
@@ -466,7 +467,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
             const year = today.getFullYear();
             const formattedApiDate = [year, month.padStart(2, '0'), day.padStart(2, '0')].join('-');
 
-            const response = await fetch('http://localhost:5000/log-fasting', {
+            const response = await fetch(`${API_BASE_URL}/log-fasting`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -780,7 +781,7 @@ const ModernDashboard = ({ macrosData, mealPlan, user }) => {
                             onClick={async () => {
                                 setLoadingGrocery(true);
                                 try {
-                                    const res = await fetch(`http://localhost:5000/predict-grocery?userId=${user?.emailid}`);
+                                    const res = await fetch(`${API_BASE_URL}/predict-grocery?userId=${user?.emailid}`);
                                     const data = await res.json();
                                     setGroceryList(data);
                                 } catch (err) {

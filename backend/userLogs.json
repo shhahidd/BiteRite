@@ -164,5 +164,20 @@
     "type": "fasting",
     "startTime": "20:00",
     "endTime": "12:00"
+  },
+  {
+    "id": 1783681584203,
+    "userId": "shahidpatel2600@gmail.com",
+    "date": "2026-07-10",
+    "mealType": "breakfast",
+    "weight": 100,
+    "food": {
+      "id": 19,
+      "name": "Chicken Curry",
+      "calories": 150,
+      "protein": 12.5,
+      "carbs": 7.5,
+      "fat": 7.5
+    }
   }
 ]
